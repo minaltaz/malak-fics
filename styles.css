@@ -1,4 +1,20 @@
+@font-face {
+	font-family: Comfortaa;
+	src: url(/res/Comfortaa-Regular.ttf);
+}
+@font-face {
+	font-family: Comfortaa;
+	src: url(/res/Comfortaa-Bold.ttf);
+	font-weight: bold;
+}
+@font-face {
+	font-family: Comfortaa;
+	src: url(/res/Comfortaa-Light.ttf);
+	font-style: italic;
+}
+
 h1{
+	font-family: Comfortaa, Arial, sans-serif;
 	font-size: 42px;
 	color: #2255DD;
 }
