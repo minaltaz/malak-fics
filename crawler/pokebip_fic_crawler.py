@@ -97,9 +97,21 @@ if __name__ == "__main__":
 		print("Usage: pokebip_fic_crawler.py <table_of_contents_url> <book_name> <author> <outname>")
 		exit()
 	if len(sys.argv) >= 6:
-		opt = sys.argv[5]
+		opts = sys.argv[5:]
 	else:
-		opt = ""
+		opts = []
+	startchapter = endchapter = None
+	started = True
+	for opt in opts:
+		if "--from=" in opt:
+			startchapter = opt.partition("=")[-1].strip('"')
+			started = False
+		if "--to" in opt:
+			endchapter = opt.partition("=")[-1].strip('"')
+	if startchapter is not None:
+		print("Début à '%s'" % startchapter)
+	if endchapter is not None:
+		print("Jusqu'à '%s'" % endchapter)
 	tocurl = sys.argv[1]
 	bookname = sys.argv[2]
 	author = sys.argv[3]
@@ -140,7 +152,7 @@ if __name__ == "__main__":
 		f.write(html)
 	data = {"id": "cover", "href": "chapter1.xhtml", "type": "application/xhtml+xml"}
 	opfmanifest += OPF_MANIFEST_ITEM_TEMPLATE % data
-	if opt != "--repack":
+	if "--repack" not in opts:
 		# Récupération des URL des pages
 		f = request.urlopen(tocurl)
 		html = f.read().decode("utf-8")
@@ -153,7 +165,6 @@ if __name__ == "__main__":
 		chapter = 0
 		while '<a href' in toc:
 			# Récupération du texte
-			print("\nRécupération du chapitre %d" % chapter)
 			start = toc.index('<a href')
 			end = toc.index('</a>')
 			line = toc[start:end]
@@ -164,56 +175,66 @@ if __name__ == "__main__":
 				chapter += 1
 				continue
 			url = "https://www.pokebip.com/" + match.groups()[0]
-			print("URL du chapitre : %s" % url)
 			title = line[match.end():].strip()
-			print("Titre du chapitre : %s" % title)
+			if startchapter is not None:
+				if not started and startchapter.lower() in title.lower():
+					started = True
+			if endchapter is not None:
+				if started and endchapter.lower() in title.lower():
+					started = None
 			# Récupération du chapitre
-			f = request.urlopen(url)
-			html = f.read().decode("utf-8")
-			f.close()
-			starttxt = html.index('<div class="fanfics-affichage-chapitre-corps">')
-			usingtxt = html[starttxt:].replace('<div class="fanfics-affichage-chapitre-corps">', '<div class="text">')
-			endtxt = usingtxt.index('</div>')
-			content = usingtxt[:endtxt] + "</div>"
-			# Insertion des images
-			sub = content
-			while "<img" in sub:
-				start = sub.index("<img")
-				end = sub[start:].index(">")
-				line = sub[start: start + end]
-				sub = sub[start + end + 1:]
-				match = IMG_REGEX.match(line)
-				if match is None:
-					print("Erreur pour la récupération d'une image dans le chapitre %d" % chapter)
-					continue
-				imgurl = match.groups()[0].strip()
-				f = request.urlopen(imgurl)
-				data = f.read()
+			if started == True or started is None:
+				print("\nRécupération du chapitre %d" % chapter)
+				print("URL du chapitre : %s" % url)
+				print("Titre du chapitre : %s" % title)
+				f = request.urlopen(url)
+				html = f.read().decode("utf-8")
 				f.close()
-				imgname = imgurl.split("/")[-1]
-				imgid = imgname.replace(".", "_")
-				with open(os.path.join(outname, "images", imgname), "wb") as f:
-					f.write(data)
-				data = {"id": imgid, "href": "../images/%s" % imgname, "type": IMAGE_MIME_TYPES[imgname.split(".")[-1].lower()]}
-				opfmanifest += OPF_MANIFEST_ITEM_TEMPLATE % data
-				content = content.replace(imgurl, "../images/%s" % imgname)
+				starttxt = html.index('<div class="fanfics-affichage-chapitre-corps">')
+				usingtxt = html[starttxt:].replace('<div class="fanfics-affichage-chapitre-corps">', '<div class="text">')
+				endtxt = usingtxt.index('</div>')
+				content = usingtxt[:endtxt] + "</div>"
+				# Insertion des images
+				sub = content
+				while "<img" in sub:
+					start = sub.index("<img")
+					end = sub[start:].index(">")
+					line = sub[start: start + end]
+					sub = sub[start + end + 1:]
+					match = IMG_REGEX.match(line)
+					if match is None:
+						print("Erreur pour la récupération d'une image dans le chapitre %d" % chapter)
+						continue
+					imgurl = match.groups()[0].strip()
+					f = request.urlopen(imgurl)
+					data = f.read()
+					f.close()
+					imgname = imgurl.split("/")[-1]
+					imgid = imgname.replace(".", "_")
+					with open(os.path.join(outname, "images", imgname), "wb") as f:
+						f.write(data)
+					data = {"id": imgid, "href": "../images/%s" % imgname, "type": IMAGE_MIME_TYPES[imgname.split(".")[-1].lower()]}
+					opfmanifest += OPF_MANIFEST_ITEM_TEMPLATE % data
+					content = content.replace(imgurl, "../images/%s" % imgname)
 
-			# Génération du HTML de sortie
-			data = {"booktitle": bookname, "title": title, "content": content}
-			final = CHAPTER_TEMPLATE % data
-			refid = "part%05d" % chapter
-			with open(os.path.join(outname, "text", "%s.html" % refid), "w", encoding="utf-8") as h:
-				h.write(final)
-			# Ajout dans les métadonnées
-			data = {"id": refid, "href": "../text/%s.html" % refid, "type": "application/xhtml+xml"}
-			opfmanifest += OPF_MANIFEST_ITEM_TEMPLATE % data
-			data = {"id": refid}
-			opfspineitem = OPF_SPINE_ITEM_TEMPLATE % data
-			opfspine += opfspineitem
-			data = {"id": refid, "href": "../text/%s.html" % refid, "title": title, "order": chapter + 1}
-			ncxmapitem = NCX_NAVMAP_ITEM_TEMPLATE % data
-			ncxmap += ncxmapitem
-			chapter += 1
+				# Génération du HTML de sortie
+				data = {"booktitle": bookname, "title": title, "content": content}
+				final = CHAPTER_TEMPLATE % data
+				refid = "part%05d" % chapter
+				with open(os.path.join(outname, "text", "%s.html" % refid), "w", encoding="utf-8") as h:
+					h.write(final)
+				# Ajout dans les métadonnées
+				data = {"id": refid, "href": "../text/%s.html" % refid, "type": "application/xhtml+xml"}
+				opfmanifest += OPF_MANIFEST_ITEM_TEMPLATE % data
+				data = {"id": refid}
+				opfspineitem = OPF_SPINE_ITEM_TEMPLATE % data
+				opfspine += opfspineitem
+				data = {"id": refid, "href": "../text/%s.html" % refid, "title": title, "order": chapter + 1}
+				ncxmapitem = NCX_NAVMAP_ITEM_TEMPLATE % data
+				ncxmap += ncxmapitem
+				chapter += 1
+			if started is None:
+				started = False
 
 		# Finalisation des métadonnées, commence par OPF
 		uniqueid = uuid.uuid5(uuid.NAMESPACE_URL, tocurl)
@@ -234,6 +255,8 @@ if __name__ == "__main__":
 			arcpath = os.path.join(path.partition(os.path.sep)[-1], filename)
 			out.write(filepath, arcpath)
 	out.close()
+	if "--clean" in opts:
+		shutil.rmtree(outname)
 
 	# Conversion
 	subprocess.run(("ebook-convert", outpath, outpath.replace(".epub", ".pdf")))
