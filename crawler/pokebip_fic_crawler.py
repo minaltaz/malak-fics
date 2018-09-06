@@ -179,14 +179,12 @@ if __name__ == "__main__":
 			if startchapter is not None:
 				if not started and startchapter.lower() in title.lower():
 					started = True
-			if endchapter is not None:
-				if started and endchapter.lower() in title.lower():
-					started = None
 			# Récupération du chapitre
-			if started == True or started is None:
-				print("\nRécupération du chapitre %d" % chapter)
-				print("URL du chapitre : %s" % url)
-				print("Titre du chapitre : %s" % title)
+			if started:
+				if "--verbose" in opts:
+					print("\nRécupération du chapitre %d" % chapter)
+					print("URL du chapitre : %s" % url)
+					print("Titre du chapitre : %s" % title)
 				f = request.urlopen(url)
 				html = f.read().decode("utf-8")
 				f.close()
@@ -233,8 +231,10 @@ if __name__ == "__main__":
 				ncxmapitem = NCX_NAVMAP_ITEM_TEMPLATE % data
 				ncxmap += ncxmapitem
 				chapter += 1
-			if started is None:
-				started = False
+
+			if endchapter is not None:
+				if started and endchapter.lower() in title.lower():
+					started = False
 
 		# Finalisation des métadonnées, commence par OPF
 		uniqueid = uuid.uuid5(uuid.NAMESPACE_URL, tocurl)
