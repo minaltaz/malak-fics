@@ -18,7 +18,7 @@ fics = {
 	"xsquad4": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc VI : Pokémon Méchas", "Malak", "x-squad4", '--from="Chapitre 81 :"', '--to="Chapitre 105 :"', "--clean"),
 	"xsquad5": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc V : Elysium", "Malak", "x-squad5", '--from="Chapitre 106 :"', '--to="Fruits de Vie (8/8)"', "--clean"),
 	"xsquad6": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc VI : Agents de la Corruption", "Malak", "x-squad6", '--from="Chapitre 161 :"', '--to="Chapitre 187 :"', "--clean"),
-	"xsquad7": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc VII : GSR", "Malak", "x-squad7", '--from="Chapitre 188 :"', '--to="molécule d\'or (8/8)"', "--clean"),
+	"xsquad7": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc VII : GSR", "Malak", "x-squad7", '--from="Chapitre 188 :"', '--to="cule d\'or (8/8)"', "--clean"),
 	"xsquad8": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc VIII : Venamia", "Malak", "x-squad8", '--from="Chapitre 238 :"', '--to="Le destin des Primordiaux"', "--clean"),
 	"xsquad9": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc IX : Guerre Mondiale", "Malak", "x-squad9", '--from="Chapitre 301 :"', '--to="Chapitre 370 :"', "--clean"),
 }
