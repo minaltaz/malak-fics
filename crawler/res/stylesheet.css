@@ -19,6 +19,8 @@
     font-style: normal;
     font-stretch: normal;
     }
-html {
+* {
     font-family: "DejaVu Sans";
+    text-align: justify;
+    text-justify: inter-word;
 }
