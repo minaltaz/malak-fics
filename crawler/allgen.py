@@ -32,7 +32,7 @@ if __name__ == "__main__":
 		opt = sys.argv[1]
 	if opt == "all":
 		for name in fics:
-			subprocess.run(("python3", "pokebip_fic_crawler.py") + fics[name])
+			subprocess.run(("python3", "pokebip_fic_crawler.py") + fics[name] + ("--verbose", ))
 	elif opt == "xsquadarcs":
 		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics["xsquad1"])
 		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics["xsquad2"])
@@ -44,4 +44,4 @@ if __name__ == "__main__":
 		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics["xsquad8"])
 		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics["xsquad9"])
 	else:
-		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics[opt])
+		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics[opt] + ("--verbose",))
