@@ -23,6 +23,7 @@ fics = {
 	"xsquad7": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc VII : GSR", "Malak", "x-squad7", '--from="Chapitre 188 :"', '--to="cule d\'or (8/8)"', "--clean"),
 	"xsquad8": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc VIII : Venamia", "Malak", "x-squad8", '--from="Chapitre 238 :"', '--to="Le destin des Primordiaux"', "--clean"),
 	"xsquad9": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc IX : Guerre Mondiale", "Malak", "x-squad9", '--from="Chapitre 301 :"', '--to="Chapitre 370 :"', "--clean"),
+        "xsquad10": ("https://www.pokebip.com/index.php?phppage=membres/fanfics/affichage-fanfic&f=17488", "Team Rocket X-Squad, Arc X : Jugement Dernier", "Malak", "x-squad10", '--from="Chapitre 371 :"', "--clean")
 }
 
 if __name__ == "__main__":
@@ -43,5 +44,6 @@ if __name__ == "__main__":
 		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics["xsquad7"])
 		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics["xsquad8"])
 		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics["xsquad9"])
+		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics["xsquad10"])
 	else:
 		subprocess.run(("python3", "pokebip_fic_crawler.py") + fics[opt] + ("--verbose",))
